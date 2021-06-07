@@ -1,0 +1,1 @@
+server is to store data in couchdb while in client you can store data in pouchdb and sync its data with couchdb

@@ -1,0 +1,25 @@
+{
+  "name": "offline_nodejs_web_application2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hoodie/store-client": "^8.3.0",
+    "async": "^3.2.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "dotenv": "^9.0.2",
+    "express": "^4.17.1",
+    "nano": "^9.0.3",
+    "nodemon": "^2.0.7",
+    "pouchdb": "^7.2.2"
+  }
+}

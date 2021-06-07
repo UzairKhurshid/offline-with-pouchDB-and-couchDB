@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <h1>Working Example of pouchDB.</h1>
+    <label>Task Name</label>
+    <input id="taskName" type="text" name="taskName" required>
+    <button onclick="clickFun()">Add Task</button>
+    <button onClick="syncData()">Destroy Database</button>
+
+    
+    <script src="assets/pouchdb-7.2.1.min.js"></script>
+    <script>
+        //check for online
+        const db = new PouchDB('tests');
+        var remoteDB = new PouchDB('http://localhost:5984/todos', {skip_setup: true,auth: {
+            username: 'uzair',
+            password: 'uzair@123',
+            },})
+
+        
+
+        db.allDocs({ include_docs: true, descending: true }, (err, doc) => {
+            doc.rows.forEach(e => {
+                console.log(e.doc)
+            });
+        }).catch((err) => {
+            console.error(err);
+        });
+
+
+     
+        // db.get('2021-05-24T12:31:59.021Z').then(function(doc){
+        //     console.log(doc)
+        //     doc.completed=true
+        //     //Inserting Document
+        //     console.log('updating .....')
+        //     console.log(doc)
+        //     db.put(doc).then((res) => {
+        //         console.log('doc updated')
+        //         console.log(res)
+        //     }).catch((err) => {
+        //         console.error(err);
+        //     });
+            
+        // }).catch(function (err) {
+        //     if (err.name === 'not_found') {
+        //         console.log()
+        //     } else { // hm, some other error
+        //         throw err;
+        //     }
+        //     }).then(function (configDoc) {
+        //     // sweet, here is our configDoc
+        //     }).catch(function (err) {
+        //     // handle any errors
+        //     });
+
+        function syncData() {    
+            if(navigator.onLine) {
+                alert("Hurray! You're online!!!");
+                
+                //sync data
+                db.replicate.to(remoteDB).on('complete', function () {
+                    // yay, we're done!
+                    console.log('Synching successfull!')
+                }).on('error', function (err) {
+                    // boo, something went wrong!
+                    console.log('Synching failed!')
+                    console.log(err)
+                });
+                // //destroy database
+                // db.destroy().then(function () {
+                //     // database destroyed
+                //     console.log('databse destroyed.')
+                // }).catch(function (err) {
+                //     // error occurred
+                //     console.log('Error destroying database .')
+                // })
+            } else {
+                alert("Oops! You're offline. Please check your network connection...");
+            }
+        }
+
+
+        function clickFun(){
+            var taskName=document.getElementById('taskName').value;
+            doc = {
+                _id: new Date().toISOString(),
+                name: taskName,
+                completed:false
+            };
+            db.put(doc).then((res) => {
+                console.log("Single Document inserted OK");
+                console.log(res)
+            }).catch((err) => {
+                console.error(err);
+            });
+        }
+
+
+       
+
+
+
+        //examples
+        //https://zetcode.com/javascript/pouchdb/     ==> tutorial link
+            //db info  ------------------------------------------------------------------------
+            // db.info() 
+            // .then((info) => {
+            //     console.log(info);
+            // })
+            remoteDB.info() 
+            .then((info) => {
+                console.log(info);
+            })
+            //insert one doc  ------------------------------------------------------------------------
+            // doc = {
+            //     _id: new Date().toISOString(),
+            //     name: 'Peter',
+            //     age: 23,
+            //     occupation: 'designer'
+            // };
+            // db.put(doc).then((res) => {
+            //     console.log("Single Document inserted OK");
+            //     console.log(res)
+            // }).catch((err) => {
+            //     console.error(err);
+            // });
+            //insert multiple Document  ------------------------------------------------------------------------
+            // doc1 = { _id: 'peter43@gmail.com', name: 'Peter', age: 23, occupation: 'designer' };
+            // doc2 = { _id: 'sofia23@gmail.com', name: 'Sofia', age: 44, occupation: 'teacher' };
+            // doc3 = { _id: 'paul54@gmail.com', name: 'Paul', age: 25, occupation: 'driver' };
+            // docs = [doc1, doc2, doc3];
+
+            // db.bulkDocs(docs).then((res) => {
+            //     console.log("Multiple Documents inserted OK");
+            //     console.log(res)
+            // }).catch(() => {
+            //     console.error(err);
+            // });
+            //all Documents ------------------------------------------------------------------------
+            // db.allDocs({ include_docs: true, descending: true }, (err, doc) => {
+
+            //     doc.rows.forEach(e => {
+            //         console.log(e.doc);
+            //     });
+
+            // }).catch((err) => {
+            //     console.error(err);
+            // });
+            //single document   ------------------------------------------------------------------------
+            // db.get('sofia23@gmail.com').then((doc) => {
+            //     console.log(`${doc.name}, ${doc.age}, ${doc.occupation}`);
+            // }).catch((err) => {
+            //     console.error(err);
+            // });
+            //remove document   ------------------------------------------------------------------------
+            // db.get('paul54@gmail.com').then((doc) => {
+            //     return db.remove(doc);
+            // }).then((res) => {
+            //     console.log("The document has been removed");
+            // }).catch((err) => {
+            //     console.error(err);
+            // });  
+    </script>
+</body>
+
+</html>
